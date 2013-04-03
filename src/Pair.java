@@ -29,4 +29,10 @@ public class Pair<T, U>
 	{
 		return u;
 	}
+	
+	public void setSecond(U u1)
+	{
+		u = u1;
+	}
+	
 }

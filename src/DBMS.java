@@ -14,13 +14,18 @@ public class DBMS
 	static final MFstruct_orig MFStructOrig = new MFstruct_orig();
 	static final InfoSchema infoSchema = new InfoSchema();
 	
+<<<<<<< HEAD
     
     
+=======
+	static final MF_struct mfstruct = new MF_struct();
+	
+>>>>>>> First Milestone Completed.
 	static Connection conn;
 	
 	public static void main(String arg[])
 	{
-		String filePath = "/users/michaelt/desktop/test.txt";
+		String filePath = "./test.txt";
 		BufferedReader br = null;
 		String curLine;
 		try
@@ -58,6 +63,13 @@ public class DBMS
 			Class.forName(JDBC_DRIVER);
 			conn = DriverManager.getConnection(DB_URL, user, password);
 			checkInfoSchema();
+			infoSchema.setStructType();
+			printInfoSchema(infoSchema);
+			mfstruct.setStructString(MFStructOrig, infoSchema);
+			
+			System.out.println();
+			System.out.println("The mf-struct code in C:");
+			System.out.println(mfstruct.getStructStr());
 			conn.close();
 		}
 		catch (ClassNotFoundException e)
@@ -125,16 +137,21 @@ public class DBMS
 				String type = rs.getString("data_type");
 				infoSchema.addValue(col, type);
 			}
-			for(int i = 0; i != infoSchema.lstMap.size(); i++)
-			{
-				System.out.println( infoSchema.lstMap.get(i).getFirst() + "\t"
-						+ infoSchema.lstMap.get(i).getSecond());
-			}
+			printInfoSchema(infoSchema);
 			System.out.println();
 		}
 		catch (SQLException ex)
 		{
 			ex.printStackTrace();
+		}
+	}
+	
+	private static void printInfoSchema(InfoSchema infoSchema)
+	{
+		for(int i = 0; i != infoSchema.lstPair.size(); i++)
+		{
+			System.out.println( infoSchema.lstPair.get(i).getFirst() + "\t"
+					+ infoSchema.lstPair.get(i).getSecond());
 		}
 	}
 }

@@ -1,0 +1,12 @@
+SELECT ATTRIBUTE(S):
+cust, 1_sum_quant, 2_sum_quant, 3_sum_quant
+NUMBER OF GROUPING VARIABLES(n):
+3
+GROUPING ATTRIBUTES(V);
+cust
+F-VECT([F]):
+1_sum_quant, 2_sum_quant, 3_sum_quant
+SELECT CONDITION-VECT([]):
+1.state='NY'
+2.state='NJ'
+3.state='CT'
