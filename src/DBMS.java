@@ -13,14 +13,10 @@ public class DBMS
 	static final String password = "tongqiang";
 	static final MFstruct_orig MFStructOrig = new MFstruct_orig();
 	static final InfoSchema infoSchema = new InfoSchema();
-	
-<<<<<<< HEAD
-    
-    
-=======
+
 	static final MF_struct mfstruct = new MF_struct();
 	
->>>>>>> First Milestone Completed.
+
 	static Connection conn;
 	
 	public static void main(String arg[])
