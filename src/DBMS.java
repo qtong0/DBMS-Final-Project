@@ -14,6 +14,8 @@ public class DBMS
 	static final MFstruct_orig MFStructOrig = new MFstruct_orig();
 	static final InfoSchema infoSchema = new InfoSchema();
 	
+    
+    
 	static Connection conn;
 	
 	public static void main(String arg[])
