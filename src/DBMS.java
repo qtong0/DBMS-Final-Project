@@ -8,7 +8,7 @@ import java.sql.*;
 public class DBMS
 {
 	static final String JDBC_DRIVER = "org.postgresql.Driver";
-	static final String DB_URL = "jdbc:postgresql://localhost:5432/MyDB";
+	static final String DB_URL = "jdbc:postgresql://localhost:5432/DBMS";
 	static final String user = "postgres";
 	static final String password = "tongqiang";
 	static final MFstruct_orig MFStructOrig = new MFstruct_orig();
