@@ -68,7 +68,7 @@ public class DBMS
 			System.out.println(mfstruct.getStructStr());
 			
 			System.out.println();
-			GeneratedCode gCode = new GeneratedCode();
+			GenerateCode gCode = new GenerateCode();
 			gCode.setList(infoSchema.getList());
 			gCode.printGCode();
 			conn.close();
