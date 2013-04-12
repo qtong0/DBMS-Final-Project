@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class MFstruct_orig
 {
 	public ArrayList<String> lst_Select_Attr = new ArrayList<String>();
-	public int num_Grouping_Attr = 0;
+	public int num_Grouping_Vari = 0;
 	public ArrayList<String> lst_Grouping_Attr = new ArrayList<String>();
 	public ArrayList<String> lst_FV = new ArrayList<String>();
 	public ArrayList<String> lst_conditions = new ArrayList<String>();
@@ -62,8 +62,8 @@ public class MFstruct_orig
 	public void setGroupingAttrNumber(String curLine)
 	{
 		System.out.println("Grouping variable number:");
-		this.num_Grouping_Attr = Integer.parseInt(curLine);
-		System.out.println(this.num_Grouping_Attr);
+		this.num_Grouping_Vari = Integer.parseInt(curLine);
+		System.out.println(this.num_Grouping_Vari);
 		System.out.println();
 	}
 	

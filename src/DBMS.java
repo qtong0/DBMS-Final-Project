@@ -59,13 +59,18 @@ public class DBMS
 			Class.forName(JDBC_DRIVER);
 			conn = DriverManager.getConnection(DB_URL, user, password);
 			checkInfoSchema();
-			infoSchema.setStructType();
+			infoSchema.setStructTypeJAVA();
 			printInfoSchema(infoSchema);
 			mfstruct.setStructString(MFStructOrig, infoSchema);
 			
 			System.out.println();
 			System.out.println("The mf-struct code in C:");
 			System.out.println(mfstruct.getStructStr());
+			
+			System.out.println();
+			GeneratedCode gCode = new GeneratedCode();
+			gCode.setList(infoSchema.getList());
+			gCode.printGCode();
 			conn.close();
 		}
 		catch (ClassNotFoundException e)
@@ -88,7 +93,10 @@ public class DBMS
 		{
 			try
 			{
-				if (br != null)br.close();
+				if (br != null)
+				{
+					br.close();
+				}
 			}
 			catch (IOException ex) 
 			{
@@ -144,10 +152,10 @@ public class DBMS
 	
 	private static void printInfoSchema(InfoSchema infoSchema)
 	{
-		for(int i = 0; i != infoSchema.lstPair.size(); i++)
+		for(int i = 0; i != infoSchema.getList().size(); i++)
 		{
-			System.out.println( infoSchema.lstPair.get(i).getFirst() + "\t"
-					+ infoSchema.lstPair.get(i).getSecond());
+			System.out.println( infoSchema.getList().get(i).getFirst() + "\t"
+					+ infoSchema.getList().get(i).getSecond());
 		}
 	}
 }
