@@ -11,12 +11,12 @@ public class MF_struct
 	public void setStructString(MFstruct_orig mforig, InfoSchema info)
 	{
 		structStr = "struct mf_struct\n{\n";
-		
+		String columnName = null;
 		for(int i = 0; i != mforig.lst_Select_Attr.size(); i++)
 		{
 			structStr += "\t";
 			String columnOrig = mforig.lst_Select_Attr.get(i);
-			String columnName = getColumnName(columnOrig);
+			columnName = getColumnName(columnOrig);
 			String type = info.getTypeFromColumn(columnName);
 			structStr += type;
 			structStr += " ";
@@ -27,12 +27,42 @@ public class MF_struct
 			}
 			structStr += ";\n";
 		}
-		structStr += "};";
+		structStr += "};\n";
 	}
 	
-	public void setClassString(InfoSchema info)
+	public void setClassString(MFstruct_orig mforig, InfoSchema info)
 	{
-		classStr = "public class\n{\n";
+		classStr = "public class ";
+		classStr += "MFStruct\n{\n";
+		String columnName = null;
+		
+		for(int i = 0; i != mforig.lst_Select_Attr.size(); i++)
+		{
+			classStr += "\t";
+			String columnOrig = mforig.lst_Select_Attr.get(i);
+			columnName = getColumnName(columnOrig);
+			String type = info.getTypeFromColumn(columnName);
+			classStr += type;
+			classStr += " ";
+			classStr += convertVariableName(columnOrig);
+			classStr += ";\n";
+		}
+		for(int i = 0; i != mforig.num_Grouping_Vari; i++)
+		{
+			classStr = classStr + "\tint count_" + Integer.toString(i+1) + ";\n";
+		}
+		if(columnName.contains("sum") != false)
+		{
+			for(int i = 0; i != mforig.num_Grouping_Vari; i++)
+			{
+				classStr += "\tint ";
+				classStr += "sum_";
+				classStr += mySumSubString(mforig.lst_FV.get(i));
+				classStr = classStr + "_" + Integer.toString(i+1);
+				classStr += ";\n";
+			}
+		}
+		classStr += "}\n";
 	}
 	
 	public String getStructStr()
@@ -81,8 +111,30 @@ public class MF_struct
 			numberStr = name.substring(0, j);
 			name = name.substring(j + 1, name.length());
 		}
-		name += "_";
-		name += numberStr;
+		if(numberStr != null)
+		{
+			name += "_";
+			name += numberStr;
+		}
 		return name;
+	}
+	
+	private String mySumSubString(String name)
+	{
+		String sumColumnNameStr = null;
+		if(Character.isDigit(name.charAt(0)))
+		{
+			int j = 0;
+			for(int i = name.length(); i != 0; i--)
+			{
+				if(name.charAt(i - 1) == '_')
+				{
+					j = i;
+					break;
+				}
+			}
+			sumColumnNameStr = name.substring(j, name.length());
+		}
+		return sumColumnNameStr;
 	}
 }

@@ -61,16 +61,16 @@ public class DBMS
 			checkInfoSchema();
 			infoSchema.setStructTypeJAVA();
 			printInfoSchema(infoSchema);
-			mfstruct.setStructString(MFStructOrig, infoSchema);
 			
+			mfstruct.setClassString(MFStructOrig, infoSchema);
 			System.out.println();
-			System.out.println("The mf-struct code in C:");
-			System.out.println(mfstruct.getStructStr());
+			System.out.println("The mf-struct class code in JAVA:");
+			System.out.println(mfstruct.getClassStr());
 			
-			System.out.println();
-			GenerateCode gCode = new GenerateCode();
-			gCode.setList(infoSchema.getList());
-			gCode.printGCode();
+//			System.out.println();
+//			GenerateCode gCode = new GenerateCode();
+//			gCode.setList(infoSchema.getList());
+//			gCode.printGCode();
 			conn.close();
 		}
 		catch (ClassNotFoundException e)
