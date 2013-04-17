@@ -7,6 +7,7 @@ import java.util.Date;
 
 public class GenerateCode
 {
+	String strMFStruct = null;
 	Date dNow = new Date();
 	SimpleDateFormat ft = new SimpleDateFormat ("E yyyy.MM.dd 'at' hh:mm:ss a zzz");
 	ArrayList<Pair<String, String>> lstInfoSchemaPair = null;
@@ -42,7 +43,7 @@ public class GenerateCode
 	+ "\t\t\tClass.forName(JDBC_DRIVER);\n"
 			+ "\t\t\tconn = DriverManager.getConnection(DB_URL, user, password);\n"
 	+ "\t\t\tSystem.out.println(\"[Results of the query]\");\n"
-	+ "\t\t\tString queryStr = \"SELECT * FROM SALES\";\n"
+	+ "\t\t\tString queryStr = \"SELECT * FROM CALLS\";\n"
 	+ "\t\t\tStatement st = conn.createStatement();\n"
 	+ "\t\t\tResultSet rs = st.executeQuery(queryStr);\n";
 	
@@ -64,14 +65,19 @@ public class GenerateCode
 			+ "\t\t}\n"
 			+ "\t}\n}\n";
 	
-	public void setList(ArrayList<Pair<String, String>> lst)
+	public GenerateCode(MF_struct mfstruct)
+	{
+		this.strMFStruct = mfstruct.getClassStr();
+	}
+	
+	public void setInfoSchemaList(ArrayList<Pair<String, String>> lst)
 	{
 		lstInfoSchemaPair = new ArrayList<Pair<String, String>>(lst.size());
 		for(int i = 0; i != lst.size(); i++)
 		{
 			lstInfoSchemaPair.add(lst.get(i));
 		}
-		strTmpTodo = this.generateTmpString();
+		strTmpTodo = this.generateVarsString();
 	}
 	
 	public void printGCode()
@@ -83,9 +89,12 @@ public class GenerateCode
 			//generate a java file
 			try
 			{
-				PrintWriter pwout = new PrintWriter(new FileWriter("./GeneratedCode.java"));
-				pwout.print(strTotalCode);
-				pwout.close();
+				PrintWriter pwoutMain = new PrintWriter(new FileWriter("./GeneratedCode.java"));
+				pwoutMain.print(strTotalCode);
+				pwoutMain.close();
+				PrintWriter pwoutMFstruct = new PrintWriter(new FileWriter("./MFStruct.java"));
+				pwoutMFstruct.print(this.strMFStruct);
+				pwoutMFstruct.close();
 			}
 			catch (IOException e) 
 			{
@@ -95,7 +104,7 @@ public class GenerateCode
 	}
 	
 	//just a tmp example, to print out everything in the database.
-	private String generateTmpString()
+	private String generateVarsString()
 	{
 		String tmp = new String();
 		for(int i = 0; i != lstInfoSchemaPair.size(); i++)
@@ -106,7 +115,7 @@ public class GenerateCode
 			tmp = tmp + "\t\t\t\t" + type + " " + name + "Tmp" + " = rs.get" + typeGetMethod + "(\""
 					+ name + "\");\n";
 		}
-		tmp += "\t\t\t\tSystem.out.println(";
+		tmp += "//\t\t\t\tSystem.out.println(";
 		for(int i = 0; i != lstInfoSchemaPair.size(); i++)
 		{
 			if(i == lstInfoSchemaPair.size() - 1)

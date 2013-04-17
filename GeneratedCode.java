@@ -1,5 +1,5 @@
 //This code is automatically generated.
-//Generated time: Mon 2013.04.15 at 12:17:49 AM EDT
+//Generated time: Wed 2013.04.17 at 05:30:30 PM EDT
 //
 //How to run this code:
 //compile:	javac GeneratedCode.java
@@ -23,19 +23,18 @@ public class GeneratedCode
 			Class.forName(JDBC_DRIVER);
 			conn = DriverManager.getConnection(DB_URL, user, password);
 			System.out.println("[Results of the query]");
-			String queryStr = "SELECT * FROM SALES";
+			String queryStr = "SELECT * FROM CALLS";
 			Statement st = conn.createStatement();
 			ResultSet rs = st.executeQuery(queryStr);
 			while(rs.next())
 			{
-				String custTmp = rs.getString("cust");
-				String prodTmp = rs.getString("prod");
-				int dayTmp = rs.getInt("day");
-				int monthTmp = rs.getInt("month");
-				int yearTmp = rs.getInt("year");
-				String stateTmp = rs.getString("state");
-				int quantTmp = rs.getInt("quant");
-				System.out.println(custTmp + "\t" + prodTmp + "\t" + dayTmp + "\t" + monthTmp + "\t" + yearTmp + "\t" + stateTmp + "\t" + quantTmp);
+				String fromacTmp = rs.getString("fromac");
+				String fromtelTmp = rs.getString("fromtel");
+				String toacTmp = rs.getString("toac");
+				String totelTmp = rs.getString("totel");
+				String dateTmp = rs.getString("date");
+				int lengthTmp = rs.getInt("length");
+//				System.out.println(fromacTmp + "\t" + fromtelTmp + "\t" + toacTmp + "\t" + totelTmp + "\t" + dateTmp + "\t" + lengthTmp);
 			}
 		}
 		catch (SQLException e)

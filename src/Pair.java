@@ -35,4 +35,34 @@ public class Pair<T, U>
 		u = u1;
 	}
 	
+	public boolean equals(Object obj)
+	{
+		if(!(obj instanceof Pair))
+		{
+			return false;
+		}
+		if(obj == this)
+		{
+			return true;
+		}
+		if(obj.equals(null))
+		{
+			return false;
+		}
+		@SuppressWarnings("unchecked")
+		Pair<T,	U> p = (Pair<T, U>)obj;
+		if(p.getFirst() == null || p.getSecond() == null)
+		{
+			System.out.println("Pair NULL Error!");
+			return false;
+		}
+		if(p.getFirst().equals(t) && p.getSecond().equals(u))
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 }

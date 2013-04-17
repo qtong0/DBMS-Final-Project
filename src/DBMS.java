@@ -3,7 +3,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.*;
-//import java.util.Scanner;
 
 public class DBMS
 {
@@ -13,7 +12,6 @@ public class DBMS
 	static final String password = "tongqiang";
 	static final MFstruct_orig MFStructOrig = new MFstruct_orig();
 	static final InfoSchema infoSchema = new InfoSchema();
-
 	static final MF_struct mfstruct = new MF_struct();
 	
 
@@ -21,7 +19,7 @@ public class DBMS
 	
 	public static void main(String arg[])
 	{
-		String filePath = "./test.txt";
+		String filePath = "./example.txt";
 		BufferedReader br = null;
 		String curLine;
 		try
@@ -60,17 +58,14 @@ public class DBMS
 			conn = DriverManager.getConnection(DB_URL, user, password);
 			checkInfoSchema();
 			infoSchema.setStructTypeJAVA();
-			printInfoSchema(infoSchema);
+//			printInfoSchema(infoSchema);
+			//Check output
 			
 			mfstruct.setClassString(MFStructOrig, infoSchema);
-			System.out.println();
-			System.out.println("The mf-struct class code in JAVA:");
-			System.out.println(mfstruct.getClassStr());
 			
-//			System.out.println();
-//			GenerateCode gCode = new GenerateCode();
-//			gCode.setList(infoSchema.getList());
-//			gCode.printGCode();
+			GenerateCode gCode = new GenerateCode(mfstruct);
+			gCode.setInfoSchemaList(infoSchema.getList());
+			gCode.printGCode();
 			conn.close();
 		}
 		catch (ClassNotFoundException e)
@@ -105,32 +100,10 @@ public class DBMS
 		}
 	}
 	
-	@SuppressWarnings("unused")
-	private static void doSelectTest()
-	{
-		System.out.println("[Results of Select Query]");
-		String query = "select cust, prod from sales";
-		try
-		{
-			Statement st = conn.createStatement();
-			ResultSet rs = st.executeQuery(query);
-			while(rs.next())
-			{
-				String cust = rs.getString("cust");
-				String prod = rs.getString("prod");
-				System.out.println(cust + "\t" + prod);
-			}
-		}
-		catch (SQLException ex)
-		{
-			ex.printStackTrace();
-		}
-	}
-	
 	private static void checkInfoSchema()
 	{
 		String SQLQuery = "select column_name, data_type from information_schema.columns\n"
-				+ "where table_name = 'sales'";
+				+ "where table_name = 'calls'";
 		try
 		{
 			Statement st = conn.createStatement();
@@ -141,8 +114,7 @@ public class DBMS
 				String type = rs.getString("data_type");
 				infoSchema.addValue(col, type);
 			}
-			printInfoSchema(infoSchema);
-			System.out.println();
+//			printInfoSchema(infoSchema);
 		}
 		catch (SQLException ex)
 		{
@@ -150,6 +122,7 @@ public class DBMS
 		}
 	}
 	
+	@SuppressWarnings("unused")
 	private static void printInfoSchema(InfoSchema infoSchema)
 	{
 		for(int i = 0; i != infoSchema.getList().size(); i++)
