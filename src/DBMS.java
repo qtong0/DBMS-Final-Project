@@ -10,16 +10,15 @@ public class DBMS
 	static final String DB_URL = "jdbc:postgresql://localhost:5432/DBMS";
 	static final String user = "postgres";
 	static final String password = "tongqiang";
-	static final MFstruct_orig MFStructOrig = new MFstruct_orig();
+	static final MFStructOrig mfStructOrig = new MFStructOrig();
 	static final InfoSchema infoSchema = new InfoSchema();
-	static final MF_struct mfstruct = new MF_struct();
-	
+	static final GenerateMFStructCode genMFStructCode = new GenerateMFStructCode();
 
 	static Connection conn;
 	
 	public static void main(String arg[])
 	{
-		String filePath = "./example.txt";
+		String filePath = "./test.txt";
 		BufferedReader br = null;
 		String curLine;
 		try
@@ -29,31 +28,33 @@ public class DBMS
 			{
 				if(curLine.equals("SELECT ATTRIBUTE(S):"))
 				{
-					MFStructOrig.setSelectAttributes(br, curLine);
+					mfStructOrig.setSelectAttributes(br, curLine);
 					continue;
 				}
 				else if(curLine.equals("NUMBER OF GROUPING VARIABLES(n):"))
 				{
 					curLine = br.readLine();
-					MFStructOrig.setGroupingAttrNumber(curLine);
+					mfStructOrig.setGroupingAttrNumber(curLine);
 					continue;
 				}
 				else if(curLine.equals("GROUPING ATTRIBUTES(V);"))
 				{
-					MFStructOrig.setGroupingAttrs(br, curLine);
+					mfStructOrig.setGroupingAttrs(br, curLine);
 					continue;
 				}
 				else if(curLine.equals("F-VECT([F]):"))
 				{
-					MFStructOrig.setFV(br, curLine);
+					mfStructOrig.setFV(br, curLine);
 					continue;
 				}
 				else if(curLine.equals("SELECT CONDITION-VECT([]):"))
 				{
-					MFStructOrig.setConditions(br, curLine);
+					mfStructOrig.setConditions(br, curLine);
 					continue;
 				}
 			}
+			//Deal with conditions.
+			
 			Class.forName(JDBC_DRIVER);
 			conn = DriverManager.getConnection(DB_URL, user, password);
 			checkInfoSchema();
@@ -61,10 +62,10 @@ public class DBMS
 //			printInfoSchema(infoSchema);
 			//Check output
 			
-			mfstruct.setClassString(MFStructOrig, infoSchema);
+			genMFStructCode.setClassString(mfStructOrig, infoSchema);
 			
-			GenerateCode gCode = new GenerateCode(mfstruct);
-			gCode.setInfoSchemaList(infoSchema.getList());
+			GenerateMainCode gCode = new GenerateMainCode(mfStructOrig, genMFStructCode, infoSchema);
+//			gCode.setInfoSchemaList(infoSchema.getList());
 			gCode.printGCode();
 			conn.close();
 		}
@@ -103,7 +104,7 @@ public class DBMS
 	private static void checkInfoSchema()
 	{
 		String SQLQuery = "select column_name, data_type from information_schema.columns\n"
-				+ "where table_name = 'calls'";
+				+ "where table_name = 'sales'";
 		try
 		{
 			Statement st = conn.createStatement();

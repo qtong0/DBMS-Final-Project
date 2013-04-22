@@ -2,7 +2,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class MFstruct_orig
+public class MFStructOrig
 {
 	public ArrayList<String> lst_Select_Attr = new ArrayList<String>();
 	public int num_Grouping_Vari = 0;
@@ -10,6 +10,17 @@ public class MFstruct_orig
 	public ArrayList<String> lst_FV = new ArrayList<String>();
 	public ArrayList<String> lst_Conditions = new ArrayList<String>();
 	
+	public MFStructOrig(MFStructOrig orig)
+	{
+		this.lst_Select_Attr = orig.lst_Select_Attr;
+		this.num_Grouping_Vari = orig.num_Grouping_Vari;
+		this.lst_Grouping_Attr = orig.lst_Grouping_Attr;
+		this.lst_FV = orig.lst_FV;
+		this.lst_Conditions = orig.lst_Conditions;
+	}
+	public MFStructOrig()
+	{}
+
 	public void setSelectAttributes(BufferedReader br, String curLine)
 	{
 //		System.out.println("Select attribute(s):");
