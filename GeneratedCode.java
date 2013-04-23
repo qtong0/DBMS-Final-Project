@@ -1,5 +1,5 @@
 //This code is automatically generated.
-//Generated time: Mon 2013.04.22 at 01:53:34 AM EDT
+//Generated time: Tue 2013.04.23 at 04:21:43 PM EDT
 //
 //How to run this code:
 //compile:	javac GeneratedCode.java
@@ -49,6 +49,7 @@ public class GeneratedCode
 					{
 						if(lstMFStruct.get(i).equals(custTmp) == true)
 						{
+							lstMFStruct.get(i).set_count_1();
 							lstMFStruct.get(i).set_sum_quant_1(quantTmp);
 							break;
 						}
@@ -74,7 +75,10 @@ public class GeneratedCode
 					{
 						if(lstMFStruct.get(i).equals(custTmp) == true)
 						{
+							lstMFStruct.get(i).set_count_2();
 							lstMFStruct.get(i).set_sum_quant_2(quantTmp);
+							lstMFStruct.get(i).set_avg_quant_2(quantTmp);
+							lstMFStruct.get(i).set_max_quant_2(quantTmp);
 							break;
 						}
 						if(i == lstMFStruct.size() - 1)
@@ -99,7 +103,7 @@ public class GeneratedCode
 					{
 						if(lstMFStruct.get(i).equals(custTmp) == true)
 						{
-							lstMFStruct.get(i).set_sum_quant_3(quantTmp);
+							lstMFStruct.get(i).set_count_3();
 							break;
 						}
 						if(i == lstMFStruct.size() - 1)
@@ -112,13 +116,16 @@ public class GeneratedCode
 					}
 				}
 			}
-			System.out.println("cust" + "\t" + "1_sum_quant" + "\t" + "2_sum_quant" + "\t" + "3_sum_quant");
+			System.out.println("cust" + "\t" + "1_sum_quant" + "\t" + "2_count_quant" + "\t" + "2_max_quant" + "\t" + "2_avg_quant" + "\t" + "2_sum_quant" + "\t" + "3_count_quant");
 			for(int i = 0; i != lstMFStruct.size(); i++)
 			{
 				System.out.println(lstMFStruct.get(i).cust + "\t" 
 					+ lstMFStruct.get(i).sum_quant_1 + "\t" 
+					+ lstMFStruct.get(i).count_2 + "\t" 
+					+ lstMFStruct.get(i).max_quant_2 + "\t" 
+					+ lstMFStruct.get(i).avg_quant_2 + "\t" 
 					+ lstMFStruct.get(i).sum_quant_2 + "\t" 
-					+ lstMFStruct.get(i).sum_quant_3);
+					+ lstMFStruct.get(i).count_3);
 			}
 		}
 		catch (SQLException e)

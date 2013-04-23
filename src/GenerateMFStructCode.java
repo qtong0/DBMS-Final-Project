@@ -6,7 +6,8 @@ public class GenerateMFStructCode
 	private ArrayList<Pair<String, String>> lstGroupingTypeName = null;
 	private ArrayList<Pair<String, String>> lstVFVar = null;
 	private ArrayList<String> lstOrigFunctions = new ArrayList<String>();
-	private ArrayList<Pair<Integer, String>> lstFunctionNumberNames = new ArrayList<Pair<Integer, String>>();
+	private ArrayList<Pair<Integer, String>> lstFunctionNumberNames = 
+			new ArrayList<Pair<Integer, String>>();
 	private String structStr;
 	private String classStr;
 	private String strInitFunction;
@@ -106,16 +107,25 @@ public class GenerateMFStructCode
 
 		for(int i = 0; i != mforig.lst_Select_Attr.size(); i++)
 		{
-			classStr += "\t";
 			columnOrig = mforig.lst_Select_Attr.get(i);
 			String columnName = getColumnName(columnOrig);
+			if(columnOrig.contains("count") == true)
+			{
+				continue;
+			}
 			String type = info.getTypeFromColumn(columnName);
+			Pair<String, String> pairTypeName = new Pair<String, String>(type, 
+					convertVariableName(columnOrig));
+			if(this.lstAllTypeName.contains(new Pair<String, String>(type,
+					convertVariableName(columnOrig))) == true)
+			{
+				continue;
+			}
+			classStr += "\t";
 			classStr += type;
 			classStr += " ";
 			classStr += convertVariableName(columnOrig);
 			classStr += ";\n";
-			Pair<String, String> pairTypeName = new Pair<String, String>(type, 
-					convertVariableName(columnOrig));
 			lstAllTypeName.add(pairTypeName);
 			//Add sum_variables if not exist
 			if(columnOrig.contains("max")||
@@ -123,11 +133,18 @@ public class GenerateMFStructCode
 					columnOrig.contains("count") && columnOrig.contains("sum") == false)
 			{
 				String subName = this.mySumSubString(columnOrig);
-				classStr += "\t" + type + " sum_" + subName;
-				classStr += "_" + this.getFunctionNameFirstNumber(columnOrig) + ";\n";
 				Pair<String, String> pairTypeName0 = new Pair<String, String>(type, "sum_" + 
 						subName + "_" + this.getFunctionNameFirstNumber(columnOrig));
-				lstAllTypeName.add(pairTypeName0);
+				if(this.lstAllTypeName.contains(pairTypeName0) == true)
+				{
+					continue;
+				}
+				else
+				{
+					classStr += "\t" + type + " sum_" + subName;
+					classStr += "_" + this.getFunctionNameFirstNumber(columnOrig) + ";\n";
+					lstAllTypeName.add(pairTypeName0);
+				}
 			}
 		}
 
@@ -144,6 +161,11 @@ public class GenerateMFStructCode
 		this.setGroupingTypeName(mforig, info);
 		classStr = this.addJavaInitFunction(mforig, info, classStr);
 		classStr = this.addJavaEqualsFuction(classStr);
+		//Add sum function(s)
+		if(lstOrigFunctions.contains("sum"))
+		{
+			classStr = this.addJavaSumFunction(classStr);
+		}
 		//Add avg function(s)
 		if(lstOrigFunctions.contains("avg"))
 		{
@@ -158,11 +180,18 @@ public class GenerateMFStructCode
 		{
 			classStr = this.addJavaMinFunction(classStr);
 		}
-		//Add sum function(s)
-//		if(lstOrigFunctions.contains("sum"))
-//		{
-		classStr = this.addJavaSumFunction(classStr);
-//		}
+		
+		//Add all set_count_* functions...
+		for(int i = 0; i != mforig.num_Grouping_Vari; i++)
+		{
+			classStr += "\n\tpublic void ";
+			String functionName = "set_count_" + new Integer(i+1);
+			classStr += functionName + "()\n";
+//			String shortName = this.myInitSubString(name);
+			classStr += "\t{\n";
+			classStr += "\t\tcount_" + new Integer(i+1) + "++;\n";
+			classStr += "\t}\n";
+		}
 		//This is the end.
 		classStr += "\n}\n";
 	}
@@ -275,7 +304,8 @@ public class GenerateMFStructCode
 			for(int i = 0; i != lstAllTypeName.size(); i++)
 			{
 				String varName = lstAllTypeName.get(i).getSecond();
-				if(Character.isDigit(varName.charAt(varName.length() - 1)) == false || this.getVariableNumber(varName) == j + 1)
+				if(Character.isDigit(varName.charAt(varName.length() - 1)) == false
+						|| this.getVariableNumber(varName) == j + 1)
 				{
 					classStr += "\t\t";
 					classStr += varName;
@@ -287,7 +317,8 @@ public class GenerateMFStructCode
 						classStr += "Tmp";
 					}
 					type = info.getTypeFromColumn(myInitSubString(varName));
-					if(lstVFVar.contains(new Pair<String, String>(type, this.myInitSubString(varName))) == true)
+					if(lstVFVar.contains(new Pair<String, String>(type,
+							this.myInitSubString(varName))) == true)
 					{
 						classStr += this.myInitSubString(varName);
 					}
@@ -451,10 +482,11 @@ public class GenerateMFStructCode
 				classStr += "Tmp)\n";
 				String shortName = this.myInitSubString(name);
 				classStr += "\t{\n";
-				classStr += "\t\tcount_" + this.getVariableNumber(name) + "++;\n";
-				classStr += "\t\tsum_" + shortName + "_" + this.getVariableNumber(name) + " += " + 
-						shortName + "Tmp;\n";
-				classStr += "\t\t" + name + " = " + "sum_" + shortName + "_" + this.getVariableNumber(name) + 
+//				classStr += "\t\tcount_" + this.getVariableNumber(name) + "++;\n";
+//				classStr += "\t\tsum_" + shortName + "_" + this.getVariableNumber(name) + " += " + 
+//						shortName + "Tmp;\n";
+				classStr += "\t\t" + name + " = " + "sum_" + shortName + "_"
+							+ this.getVariableNumber(name) + 
 						" / count_" + this.getVariableNumber(name) + ";\n";
 				classStr += "\t}\n";
 			}
@@ -503,7 +535,7 @@ public class GenerateMFStructCode
 				classStr += "(" + type + " " + this.myInitSubString(name) + "Tmp)\n";
 				String shortName = this.myInitSubString(name);
 				classStr += "\t{\n";
-				classStr += "\t\tcount_" + this.getVariableNumber(name) + "++;\n";
+//				classStr += "\t\tcount_" + this.getVariableNumber(name) + "++;\n";
 				classStr += "\t\tif(" + shortName + "Tmp > " + name + ")\n";
 				classStr += "\t\t{\n";
 				classStr += "\t\t\t" + name + " = " + shortName + "Tmp;\n";
@@ -529,7 +561,7 @@ public class GenerateMFStructCode
 				classStr += "(" + type + " " + this.myInitSubString(name) + "Tmp)\n";
 				String shortName = this.myInitSubString(name);
 				classStr += "\t{\n";
-				classStr += "\t\tcount_" + this.getVariableNumber(name) + "++;\n";
+//				classStr += "\t\tcount_" + this.getVariableNumber(name) + "++;\n";
 				classStr += "\t\tif(" + shortName + "Tmp < " + name + ")\n";
 				classStr += "\t\t{\n";
 				classStr += "\t\t\t" + name + " = " + shortName + "Tmp;\n";
@@ -538,7 +570,7 @@ public class GenerateMFStructCode
 		}
 		return classStr;
 	}
-
+	
 	//Get the number of a method.
 	//1_avg_length => 1
 	private int getFunctionNameFirstNumber(String fname)

@@ -40,7 +40,6 @@ public class GenerateMainCode
 	
 	//main function beginning and connecting to database
 	String strMain_2 = "\t" + "static public void main(String arg[])\n" + "\t{\n"
-	//ArrayList not ready, TODO!!!!!
 	+ "\t\tArrayList<MFStruct> lstMFStruct = new ArrayList<MFStruct>();\n"
 			+ "\t\t" + "try\n" + "\t\t{\n"
 	+ "\t\t\tClass.forName(JDBC_DRIVER);\n"
@@ -54,7 +53,6 @@ public class GenerateMainCode
 	String strFirstScan_3 = "\t\t\twhile(rs.next())\n"
 			+ "\t\t\t{\n";
 	
-	//TODO part, first just printout everything
 	String strSinpleScan = null;
 	
 	String strPrintResults = null;
@@ -85,7 +83,8 @@ public class GenerateMainCode
 	{
 		if(strSinpleScan != null)
 		{
-			strTotalCode = strStartComm + strImpt_0 + strClassDec_1 + strMain_2 + strFirstScan_3 + strSinpleScan + strPrintResults + strCatchPart_end;
+			strTotalCode = strStartComm + strImpt_0 + strClassDec_1 + strMain_2
+					+ strFirstScan_3 + strSinpleScan + strPrintResults + strCatchPart_end;
 			//generate a java file
 			try
 			{
@@ -145,6 +144,8 @@ public class GenerateMainCode
 			}
 			tmp += ") == true)\n";
 			tmp += "\t\t\t\t\t\t{\n";
+			//Add count_* functions
+			tmp += "\t\t\t\t\t\t\tlstMFStruct.get(i).set_count_" + new Integer(i+1)+ "();\n";
 			
 			ArrayList<Pair<Integer, String>> tmpList = new ArrayList<Pair<Integer, String>>(
 					this.genMFStructcode.getFuncitonList());
@@ -163,7 +164,8 @@ public class GenerateMainCode
 			tmp += "\t\t\t\t\t\tif(i == lstMFStruct.size() - 1)\n";
 			tmp += "\t\t\t\t\t\t{\n";
 			tmp += "\t\t\t\t\t\t\tMFStruct mfStructTmp = new MFStruct();\n";
-			tmp += "\t\t\t\t\t\t\tmfStructTmp.initialization_" + new Integer(i+1) + "(" + this.genMFStructcode.getInitFunctionString();
+			tmp += "\t\t\t\t\t\t\tmfStructTmp.initialization_" + new Integer(i+1) + "("
+						+ this.genMFStructcode.getInitFunctionString();
 			tmp += "\t\t\t\t\t\t\tlstMFStruct.add(mfStructTmp);\n";
 			tmp += "\t\t\t\t\t\t\tbreak;\n";
 			tmp += "\t\t\t\t\t\t}\n";
@@ -193,8 +195,18 @@ public class GenerateMainCode
 		ArrayList<String> tmpList = this.mfstructOrig.lst_Select_Attr;
 		for(int i = 0; i != tmpList.size(); i++)
 		{
-			strReturn += "lstMFStruct.get(i)."
-					+ new GenerateMFStructCode().convertVariableName(tmpList.get(i));
+			String convertedName = new GenerateMFStructCode().convertVariableName(tmpList.get(i));
+			if(convertedName.startsWith("count") == false)
+			{
+				strReturn += "lstMFStruct.get(i)."
+						+ convertedName;
+			}
+			else
+			{
+				String tmp = this.myInitSubString(convertedName);
+				String countName = convertedName.replaceAll("_" + tmp, "");
+				strReturn += "lstMFStruct.get(i)." + countName;
+			}
 			if(i != tmpList.size() - 1)
 			{
 				strReturn += " + \"\\t\" \n\t\t\t\t\t+ ";
