@@ -7,6 +7,8 @@ import java.util.Date;
 
 public class GenerateMainCode
 {
+	UI_Information uiinfo;
+	
 	GenerateMFStructCode genMFStructcode = null;
 	MFStructOrig mfstructOrig = null;
 	Date dNow = new Date();
@@ -30,24 +32,10 @@ public class GenerateMainCode
 	String strClassName = "GeneratedCode";
 	
 	//class declaration
-	String strClassDec_1 = "public class " + strClassName + "\n" + "{\n"
-	+ "\t" + "static final String JDBC_DRIVER = \"org.postgresql.Driver\";\n"
-	+ "\t" + "static final String DB_URL = \"jdbc:postgresql://localhost:5432/DBMS\";\n"
-	+ "\t" + "static final String user = \"postgres\";\n"
-	+ "\t" + "static final String password = \"tongqiang\";\n"
-	+ "\t" + "static Connection conn;\n"
-	+ "\t" + "@SuppressWarnings(\"unused\")\n";
+	String strClassDec_1;
 	
 	//main function beginning and connecting to database
-	String strMain_2 = "\t" + "static public void main(String arg[])\n" + "\t{\n"
-	+ "\t\tArrayList<MFStruct> lstMFStruct = new ArrayList<MFStruct>();\n"
-			+ "\t\t" + "try\n" + "\t\t{\n"
-	+ "\t\t\tClass.forName(JDBC_DRIVER);\n"
-			+ "\t\t\tconn = DriverManager.getConnection(DB_URL, user, password);\n"
-	+ "\t\t\tSystem.out.println(\"[Results of the query]\");\n"
-	+ "\t\t\tString queryStr = \"SELECT * FROM SALES\";\n"
-	+ "\t\t\tStatement st = conn.createStatement();\n"
-	+ "\t\t\tResultSet rs = st.executeQuery(queryStr);\n";
+	String strMain_2;
 	
 	//first scan, while loop
 	String strFirstScan_3 = "\t\t\twhile(rs.next())\n"
@@ -69,11 +57,14 @@ public class GenerateMainCode
 			+ "\t}\n}\n";
 	
 	//Constructor...
-	public GenerateMainCode(MFStructOrig mfStructOrig, GenerateMFStructCode mfstruct, InfoSchema info)
+	public GenerateMainCode(UI_Information uiinfo_orig, MFStructOrig mfStructOrig, GenerateMFStructCode mfstruct, InfoSchema info)
 	{
+		this.uiinfo = new UI_Information(uiinfo_orig);
+		this.strMain_2 = generateUIInfo();
+		this.strClassDec_1 = generateDeclaration();
 		lstInfoSchemaPair = info.getList();
 		this.genMFStructcode = new GenerateMFStructCode(mfstruct);
-		mySCVConverter = new SelectConVectConverter(mfStructOrig);
+		mySCVConverter = new SelectConVectConverter(mfStructOrig, info);
 		this.mfstructOrig = new MFStructOrig(mfStructOrig);
 		strSinpleScan = this.generateFirstScan();
 		strPrintResults = this.printResults();
@@ -102,6 +93,30 @@ public class GenerateMainCode
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	private String generateDeclaration()
+	{
+		return "public class " + strClassName + "\n" + "{\n"
+				+ "\t" + "static final String JDBC_DRIVER = \"org.postgresql.Driver\";\n"
+				+ "\t" + "static final String DB_URL = \"" + uiinfo.strDBURL +/*"jdbc:postgresql://localhost:5432/DBMS"*/"\";\n"
+				+ "\t" + "static final String user = \"" + uiinfo.strDBUserName +/*"postgres"*/"\";\n"
+				+ "\t" + "static final String password = \"" + uiinfo.strDBPSW + "\";\n"
+				+ "\t" + "static Connection conn;\n"
+				+ "\t" + "@SuppressWarnings(\"unused\")\n";
+	}
+	
+	private String generateUIInfo()
+	{
+		return "\t" + "static public void main(String arg[])\n" + "\t{\n"
+				+ "\t\tArrayList<MFStruct> lstMFStruct = new ArrayList<MFStruct>();\n"
+				+ "\t\t" + "try\n" + "\t\t{\n"
+		+ "\t\t\tClass.forName(JDBC_DRIVER);\n"
+				+ "\t\t\tconn = DriverManager.getConnection(DB_URL, user, password);\n"
+		+ "\t\t\tSystem.out.println(\"[Results of the query]\");\n"
+		+ "\t\t\tString queryStr = \"SELECT * FROM " + uiinfo.strTableName + "\";\n"
+		+ "\t\t\tStatement st = conn.createStatement();\n"
+		+ "\t\t\tResultSet rs = st.executeQuery(queryStr);\n";
 	}
 	
 	//The first while() loop, for the first scan.

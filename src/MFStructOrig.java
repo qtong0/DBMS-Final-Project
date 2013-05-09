@@ -19,8 +19,58 @@ public class MFStructOrig
 		this.lst_Conditions = orig.lst_Conditions;
 	}
 	public MFStructOrig()
-	{}
+	{
+		this.lst_Select_Attr = new ArrayList<String>();
+		this.num_Grouping_Vari = 0;
+		this.lst_Grouping_Attr = new ArrayList<String>();
+		this.lst_FV = new ArrayList<String>();
+		this.lst_Conditions = new ArrayList<String>();
+	}
 
+	public void setSelectAttributes(String curLine)
+	{
+//		System.out.println("Select attribute(s):");
+		int j = 0;
+		for(int i = 0; i != curLine.length(); i++)
+		{
+			if(curLine.charAt(i) == ',')
+			{
+				if(j == 0)
+				{
+					String strAttr = curLine.substring(j, i);
+//					System.out.println(strAttr);
+					//Check output
+					this.lst_Select_Attr.add(strAttr);
+					j = i;
+				}
+				else
+				{
+					while(curLine.charAt(j) == ',' || curLine.charAt(j) == ' ')
+					{
+						j++;
+					}
+					String strAttr = curLine.substring(j, i);
+//					System.out.println(strAttr);
+					//Check output
+					this.lst_Select_Attr.add(strAttr);
+					j = i;
+				}
+			}
+			else if(i == curLine.length() - 1)
+			{
+				while(curLine.charAt(j) == ',' || curLine.charAt(j) == ' ')
+				{
+					j++;
+				}
+				String strAttr = curLine.substring(j, i + 1);
+//				System.out.println(strAttr);
+				//Check output
+				this.lst_Select_Attr.add(strAttr);
+			}
+		}
+		lst_Select_Attr = this.toLowerCase(lst_Select_Attr);
+	}
+	
 	public void setSelectAttributes(BufferedReader br, String curLine)
 	{
 //		System.out.println("Select attribute(s):");
@@ -84,6 +134,50 @@ public class MFStructOrig
 		//Check output
 	}
 	
+	public void setGroupingAttrs(String curLine)
+	{
+//		System.out.println("Grouping attribute(s):");
+		int j = 0;
+		for(int i = 0; i != curLine.length(); i++)
+		{
+			if(curLine.charAt(i) == ',')
+			{
+				if(j == 0)
+				{
+					String strAttr = curLine.substring(j, i);
+//					System.out.println(strAttr);
+					//Check output
+					this.lst_Grouping_Attr.add(strAttr);
+					j = i;
+				}
+				else
+				{
+					while(curLine.charAt(j) == ',' || curLine.charAt(j) == ' ')
+					{
+						j++;
+					}
+					String strAttr = curLine.substring(j, i);
+//					System.out.println(strAttr);
+					//Check output
+					this.lst_Grouping_Attr.add(strAttr);
+					j = i;
+				}
+			}
+			else if(i == curLine.length() - 1)
+			{
+				while(curLine.charAt(j) == ',' || curLine.charAt(j) == ' ')
+				{
+					j++;
+				}
+				String strAttr = curLine.substring(j, i + 1);
+//				System.out.println(strAttr);
+				//Check output
+				this.lst_Grouping_Attr.add(strAttr);
+			}
+		}
+		lst_Grouping_Attr = this.toLowerCase(lst_Grouping_Attr);
+	}
+	
 	public void setGroupingAttrs(BufferedReader br, String curLine)
 	{
 //		System.out.println("Grouping attribute(s):");
@@ -134,6 +228,50 @@ public class MFStructOrig
 			}
 		}
 		lst_Grouping_Attr = this.toLowerCase(lst_Grouping_Attr);
+	}
+	
+	public void setFV(String curLine)
+	{
+//		System.out.println("F-VECT:");
+		int j = 0;
+		for(int i = 0; i != curLine.length(); i++)
+		{
+			if(curLine.charAt(i) == ',')
+			{
+				if(j == 0)
+				{
+					String strAttr = curLine.substring(j, i);
+//					System.out.println(strAttr);
+					//Check output
+					this.lst_FV.add(strAttr);
+					j = i;
+				}
+				else
+				{
+					while(curLine.charAt(j) == ',' || curLine.charAt(j) == ' ')
+					{
+						j++;
+					}
+					String strAttr = curLine.substring(j, i);
+//					System.out.println(strAttr);
+					//Check output
+					this.lst_FV.add(strAttr);
+					j = i;
+				}
+			}
+			else if(i == curLine.length() - 1)
+			{
+				while(curLine.charAt(j) == ',' || curLine.charAt(j) == ' ')
+				{
+					j++;
+				}
+				String strAttr = curLine.substring(j, i + 1);
+//				System.out.println(strAttr);
+				//Check output
+				this.lst_FV.add(strAttr);
+			}
+		}
+		lst_FV = this.toLowerCase(lst_FV);
 	}
 	
 	public void setFV(BufferedReader br, String curLine)
@@ -187,6 +325,50 @@ public class MFStructOrig
 			}
 		}
 		lst_FV = this.toLowerCase(lst_FV);
+	}
+	
+	public void setConditions(String curLine)
+	{
+//		System.out.println("Conditions:");
+		int j = 0;
+		for(int i = 0; i != curLine.length(); i++)
+		{
+			if(curLine.charAt(i) == ',')
+			{
+				if(j == 0)
+				{
+					String strAttr = curLine.substring(j, i);
+//					System.out.println(strAttr);
+					//Check output
+					this.lst_Conditions.add(strAttr);
+					j = i;
+				}
+				else
+				{
+					while(curLine.charAt(j) == ',' || curLine.charAt(j) == ' ')
+					{
+						j++;
+					}
+					String strAttr = curLine.substring(j, i);
+//					System.out.println(strAttr);
+					//Check output
+					this.lst_Conditions.add(strAttr);
+					j = i;
+				}
+			}
+			else if(i == curLine.length() - 1)
+			{
+				while(curLine.charAt(j) == ',' || curLine.charAt(j) == ' ')
+				{
+					j++;
+				}
+				String strAttr = curLine.substring(j, i + 1);
+//				System.out.println(strAttr);
+				//Check output
+				this.lst_Conditions.add(strAttr);
+			}
+		}
+		lst_Conditions = this.toLowerCase(lst_Conditions);
 	}
 	
 	public void setConditions(BufferedReader br, String curLine)

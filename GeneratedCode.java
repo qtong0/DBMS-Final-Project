@@ -1,5 +1,5 @@
 //This code is automatically generated.
-//Generated time: Tue 2013.04.23 at 04:21:43 PM EDT
+//Generated time: Thu 2013.05.09 at 06:58:42 AM EDT
 //
 //How to run this code:
 //compile:	javac GeneratedCode.java
@@ -24,7 +24,7 @@ public class GeneratedCode
 			Class.forName(JDBC_DRIVER);
 			conn = DriverManager.getConnection(DB_URL, user, password);
 			System.out.println("[Results of the query]");
-			String queryStr = "SELECT * FROM SALES";
+			String queryStr = "SELECT * FROM sales";
 			Statement st = conn.createStatement();
 			ResultSet rs = st.executeQuery(queryStr);
 			while(rs.next())

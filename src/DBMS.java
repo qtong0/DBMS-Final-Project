@@ -11,14 +11,14 @@ public class DBMS
 	static final String user = "postgres";
 	static final String password = "tongqiang";
 	static final MFStructOrig mfStructOrig = new MFStructOrig();
-	static final InfoSchema infoSchema = new InfoSchema();
+	static InfoSchema infoSchema = new InfoSchema();
 	static final GenerateMFStructCode genMFStructCode = new GenerateMFStructCode();
 
 	static Connection conn;
 	
 	public static void main(String arg[])
 	{
-		String filePath = "./test.txt";
+		String filePath = "./example.txt";
 		BufferedReader br = null;
 		String curLine;
 		try
@@ -64,7 +64,7 @@ public class DBMS
 			
 			genMFStructCode.setClassString(mfStructOrig, infoSchema);
 			
-			GenerateMainCode gCode = new GenerateMainCode(mfStructOrig, genMFStructCode, infoSchema);
+			GenerateMainCode gCode = new GenerateMainCode(new UI_Information(), mfStructOrig, genMFStructCode, infoSchema);
 //			gCode.setInfoSchemaList(infoSchema.getList());
 			gCode.printGCode();
 			conn.close();
@@ -104,11 +104,12 @@ public class DBMS
 	private static void checkInfoSchema()
 	{
 		String SQLQuery = "select column_name, data_type from information_schema.columns\n"
-				+ "where table_name = 'sales'";
+				+ "where table_name = 'calls'";
 		try
 		{
 			Statement st = conn.createStatement();
 			ResultSet rs = st.executeQuery(SQLQuery);
+//			infoSchema = new InfoSchema();
 			while(rs.next())
 			{
 				String col = rs.getString("column_name");

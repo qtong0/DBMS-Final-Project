@@ -8,9 +8,11 @@ public class SelectConVectConverter
 	ArrayList<String> lstConVects = new ArrayList<String>();
 	ArrayList<Pair<Integer, String>> lstJavaCodeConditions = new ArrayList<Pair<Integer, String>>();
 	//Constructor!
-	public SelectConVectConverter(MFStructOrig orig)
+	InfoSchema info;
+	public SelectConVectConverter(MFStructOrig orig, InfoSchema info_Orig)
 	{
 		mfstruct = orig;
+		this.info = info_Orig;
 		this.lstConVects = orig.lst_Conditions;
 		this.setCodeList();
 	}
@@ -34,12 +36,12 @@ public class SelectConVectConverter
 				String subName = null, type = null;
 				parsedStr = parsedStr.replaceAll("\\s", "");
 				parsedStr = parsedStr.replace('\'', '\"');
-				for(int i1 = 0; i1 != DBMS.infoSchema.getList().size(); i1++)
+				for(int i1 = 0; i1 != info.getList().size(); i1++)
 				{
-					subName = DBMS.infoSchema.getList().get(i1).getFirst();
+					subName = info.getList().get(i1).getFirst();
 					if(parsedStr.contains(subName))
 					{
-						type = DBMS.infoSchema.getTypeFromColumn(subName);
+						type = info.getTypeFromColumn(subName);
 						parsedStr = parsedStr.replace(subName, subName + "Tmp");
 					}
 				}
@@ -70,6 +72,11 @@ public class SelectConVectConverter
 				}
 				if(parsedStr.contains("="))
 				{
+					if(type == null)
+					{
+						System.out.println("Type is NULL! SelectConVectConverter.java");
+						return;
+					}
 					if(type.equals("String"))
 					{
 						parsedStr = parsedStr.replace("=", ".equalsIgnoreCase(");
