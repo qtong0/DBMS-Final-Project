@@ -1,9 +1,10 @@
+//Check Informations_schema from database
 
 import java.util.ArrayList;
 
 public class InfoSchema
 {
-
+	//to store the type-name pair of every column in the table
 	private ArrayList<Pair<String, String>> lstPair = new ArrayList<Pair<String, String>>();
 
 	public void addValue(String column, String type)
@@ -16,6 +17,7 @@ public class InfoSchema
 		}
 	}
 	
+	//CType code, not ready yet.
 	public void setStructTypeC()
 	{
 		for(int i = 0; i != lstPair.size(); i++)
@@ -41,6 +43,7 @@ public class InfoSchema
 		}
 	}
 	
+	//JAVA type code, ready to go.
 	public void setStructTypeJAVA()
 	{
 		for(int i = 0; i != lstPair.size(); i++)
@@ -61,6 +64,7 @@ public class InfoSchema
 		}
 	}
 	
+	//get the type from the column name
 	public String getTypeFromColumn(String column)
 	{
 		for(int i = 0; i != lstPair.size(); i++)
@@ -73,6 +77,7 @@ public class InfoSchema
 		return null;
 	}
 	
+	//return pair list.
 	public ArrayList<Pair<String, String>> getList()
 	{
 		return lstPair;

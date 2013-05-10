@@ -1,3 +1,5 @@
+//Window UI, using JAVA SWT.
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -18,6 +20,7 @@ import org.eclipse.swt.layout.GridLayout;
 
 public class SWTWindow
 {
+	//Delcaration of all data
 	static final String JDBC_DRIVER = "org.postgresql.Driver";
 	static UI_Information uiInfo;
 //	static MFStructOrig mfStructOrig = new MFStructOrig();
@@ -29,6 +32,8 @@ public class SWTWindow
 	static Shell shell;
 	public static final int SHELL_TRIM = SWT.CLOSE | SWT.TITLE | SWT.MIN | SWT.RESIZE;
 	static String openFileDir = null;
+
+	//static text boxes.
 	static Text tFileDir;
 	static Text tSaveDir;
 	static Text tSelectedAttributes;
@@ -42,9 +47,9 @@ public class SWTWindow
 	static Text tPsw;
 	static Text tTableName;
 	
+	//main functions
 	public static void main(String[] args)
 	{
-		
 		try
 		{
 			Class.forName(JDBC_DRIVER);
@@ -54,6 +59,7 @@ public class SWTWindow
 			e.printStackTrace();
 		}
 		
+		//Button Generate code listener.
 		class GenerateListener implements SelectionListener
 		{
 			@Override
@@ -141,7 +147,7 @@ public class SWTWindow
 					}
 					genMFStructCode = new GenerateMFStructCode();
 					genMFStructCode.setClassString(mfStructOrig, infoSchema);
-					GenerateMainCode gCode = new GenerateMainCode(uiInfo, mfStructOrig, genMFStructCode, infoSchema);
+					GenerateMainCode gCode = new GenerateMainCode(tSaveDir.getText(),uiInfo, mfStructOrig, genMFStructCode, infoSchema);
 					gCode.printGCode();
 					conn.close();
 					System.out.println("Codes generated!");
@@ -157,6 +163,7 @@ public class SWTWindow
 			}
 		}
 		
+		//check database connection listener.
 		class CheckListener implements SelectionListener
 		{
 			public void widgetDefaultSelected(SelectionEvent arg0)
@@ -201,6 +208,7 @@ public class SWTWindow
 			}
 		}
 		
+		//open diretory listener.
 		class OpenListener implements SelectionListener
 		{
 			BufferedReader br = null;
@@ -209,7 +217,7 @@ public class SWTWindow
 				MFStructOrig mfStructTmp = new MFStructOrig();
 				FileDialog fd = new FileDialog(shell, SWT.OPEN);
 				fd.setText("Open");
-				fd.setFilterPath("../DBMS");
+				fd.setFilterPath("../DBMS/test_examples");
 				String[] filterExt = { "*.txt" };
 				fd.setFilterExtensions(filterExt);
 				String selected = fd.open();
@@ -326,6 +334,7 @@ public class SWTWindow
 			}
 		}
 		
+		//save diretory button listener.
 		class SaveListener implements SelectionListener
 		{
 			@Override
@@ -347,17 +356,21 @@ public class SWTWindow
 		}
 
 		Display display = new Display(); 
+		
 		shell = new Shell(display, SHELL_TRIM & (~SWT.RESIZE));
 		
+		//2 Tabs
 		TabFolder folder = new TabFolder(shell, SWT.NULL);
 		Composite compAll0 = new Composite(folder, SWT.NULL);
 		compAll0.setLayout(new GridLayout(1, false));
 		compAll0.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		shell.setLayout(new GridLayout(1, false));
 
+		//tab #1
 		TabItem tab0 = new TabItem(folder, SWT.NULL);
 		tab0.setText("Inputs");
 		
+		//file input
 		Group group0 = new Group(compAll0, SWT.SHADOW_IN);
 		group0.setText("Please choose a file");
 
@@ -374,6 +387,7 @@ public class SWTWindow
 		btLoadFile.setSize(btLoadFile.computeSize(SWT.NONE, SWT.DEFAULT));
 		btLoadFile.addSelectionListener(new OpenListener());
 
+		//textboxes for user to input
 		Group group1 = new Group(compAll0, SWT.SHADOW_IN);
 		group1.setText("input variables:");
 		group1.setLayout(new GridLayout(1, false));
@@ -401,6 +415,7 @@ public class SWTWindow
 		tSelectCondition = new Text(group1, SWT.BORDER);
 		tSelectCondition.setLayoutData(gd1);
 		
+		//generate code dirtory.
 		Group group2 = new Group(compAll0, SWT.SHADOW_IN);
 		group2.setText("Generated codes directory:");
 		group2.setLayout(new GridLayout(2, false));
@@ -430,13 +445,15 @@ public class SWTWindow
 		
 		tab0.setControl(compAll0);
 		
+		//Tab #2
 		TabItem tab1 = new TabItem(folder, SWT.NULL);
 		tab1.setText("DB Preferences");
 		Composite compAll1 = new Composite(folder, SWT.NULL);
 		tab1.setControl(compAll1);
 		compAll1.setLayout(new GridLayout(1, false));
 		compAll1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-
+		
+		//DB URL, user, psw, table...
 		Composite comp10 = new Composite(compAll1, SWT.NULL);
 		comp10.setLayout(new GridLayout(2, false));
 		comp10.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
@@ -508,6 +525,8 @@ public class SWTWindow
 		display.dispose(); 
 		btLoadFile.dispose();
 	}
+	
+	//check information_schema from database
 	private static void checkInfoSchema()
 	{
 		if(uiInfo == null)
@@ -535,6 +554,7 @@ public class SWTWindow
 		}
 	}
 	
+	//print informations schemas, check if they are right.
 	@SuppressWarnings("unused")
 	private static void printInfoSchema(InfoSchema infoSchema)
 	{

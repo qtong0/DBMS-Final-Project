@@ -1,5 +1,5 @@
 //This code is automatically generated.
-//Generated time: Thu 2013.05.09 at 06:58:42 AM EDT
+//Generated time: Fri 2013.05.10 at 01:20:17 AM EDT
 //
 //How to run this code:
 //compile:	javac GeneratedCode.java
@@ -10,122 +10,106 @@ import java.util.ArrayList;
 
 public class GeneratedCode
 {
+	//Declare and initialize all types and data.
 	static final String JDBC_DRIVER = "org.postgresql.Driver";
 	static final String DB_URL = "jdbc:postgresql://localhost:5432/DBMS";
 	static final String user = "postgres";
 	static final String password = "tongqiang";
 	static Connection conn;
+	//There might be some unused datatypes, eliminate warning.
 	@SuppressWarnings("unused")
+
+	//main method...
 	static public void main(String arg[])
 	{
+		//ArrayList stores all the MFStruct type of data.
 		ArrayList<MFStruct> lstMFStruct = new ArrayList<MFStruct>();
 		try
 		{
 			Class.forName(JDBC_DRIVER);
 			conn = DriverManager.getConnection(DB_URL, user, password);
 			System.out.println("[Results of the query]");
-			String queryStr = "SELECT * FROM sales";
+			String queryStr = "SELECT * FROM calls";
 			Statement st = conn.createStatement();
 			ResultSet rs = st.executeQuery(queryStr);
+			//Scan the whole database.
 			while(rs.next())
 			{
-				String custTmp = rs.getString("cust");
-				String prodTmp = rs.getString("prod");
-				int dayTmp = rs.getInt("day");
-				int monthTmp = rs.getInt("month");
-				int yearTmp = rs.getInt("year");
-				String stateTmp = rs.getString("state");
-				int quantTmp = rs.getInt("quant");
-				if(stateTmp.equalsIgnoreCase("ny"))
+				String fromacTmp = rs.getString("fromac");
+				String fromtelTmp = rs.getString("fromtel");
+				String toacTmp = rs.getString("toac");
+				String totelTmp = rs.getString("totel");
+				String dateTmp = rs.getString("date");
+				int lengthTmp = rs.getInt("length");
+				//#1 Selection Conditions.
+				if(toacTmp.equalsIgnoreCase("201"))
 				{
 					if(lstMFStruct.size() == 0)
 					{
 						MFStruct mfStructTmp = new MFStruct();
-						mfStructTmp.initialization_1(custTmp,quantTmp);
+						mfStructTmp.initialization_1(fromacTmp,fromtelTmp,lengthTmp);
 						lstMFStruct.add(mfStructTmp);
-						continue;
 					}
-					for(int i = 0; i != lstMFStruct.size(); i++)
+					else
 					{
-						if(lstMFStruct.get(i).equals(custTmp) == true)
+						for(int i = 0; i != lstMFStruct.size(); i++)
 						{
-							lstMFStruct.get(i).set_count_1();
-							lstMFStruct.get(i).set_sum_quant_1(quantTmp);
-							break;
-						}
-						if(i == lstMFStruct.size() - 1)
-						{
-							MFStruct mfStructTmp = new MFStruct();
-							mfStructTmp.initialization_1(custTmp,quantTmp);
-							lstMFStruct.add(mfStructTmp);
-							break;
+							if(lstMFStruct.get(i).equals(fromacTmp,fromtelTmp) == true)
+							{
+								lstMFStruct.get(i).set_count_1();
+								lstMFStruct.get(i).set_sum_length_1(lengthTmp);
+								break;
+							}
+							if(i == lstMFStruct.size() - 1)
+							{
+								MFStruct mfStructTmp = new MFStruct();
+								mfStructTmp.initialization_1(fromacTmp,fromtelTmp,lengthTmp);
+								lstMFStruct.add(mfStructTmp);
+								break;
+							}
 						}
 					}
 				}
-				if(stateTmp.equalsIgnoreCase("nj"))
+				//#2 Selection Conditions.
+				if(toacTmp.equalsIgnoreCase("301"))
 				{
 					if(lstMFStruct.size() == 0)
 					{
 						MFStruct mfStructTmp = new MFStruct();
-						mfStructTmp.initialization_2(custTmp,quantTmp);
+						mfStructTmp.initialization_2(fromacTmp,fromtelTmp,lengthTmp);
 						lstMFStruct.add(mfStructTmp);
-						continue;
 					}
-					for(int i = 0; i != lstMFStruct.size(); i++)
+					else
 					{
-						if(lstMFStruct.get(i).equals(custTmp) == true)
+						for(int i = 0; i != lstMFStruct.size(); i++)
 						{
-							lstMFStruct.get(i).set_count_2();
-							lstMFStruct.get(i).set_sum_quant_2(quantTmp);
-							lstMFStruct.get(i).set_avg_quant_2(quantTmp);
-							lstMFStruct.get(i).set_max_quant_2(quantTmp);
-							break;
-						}
-						if(i == lstMFStruct.size() - 1)
-						{
-							MFStruct mfStructTmp = new MFStruct();
-							mfStructTmp.initialization_2(custTmp,quantTmp);
-							lstMFStruct.add(mfStructTmp);
-							break;
-						}
-					}
-				}
-				if(stateTmp.equalsIgnoreCase("ct"))
-				{
-					if(lstMFStruct.size() == 0)
-					{
-						MFStruct mfStructTmp = new MFStruct();
-						mfStructTmp.initialization_3(custTmp,quantTmp);
-						lstMFStruct.add(mfStructTmp);
-						continue;
-					}
-					for(int i = 0; i != lstMFStruct.size(); i++)
-					{
-						if(lstMFStruct.get(i).equals(custTmp) == true)
-						{
-							lstMFStruct.get(i).set_count_3();
-							break;
-						}
-						if(i == lstMFStruct.size() - 1)
-						{
-							MFStruct mfStructTmp = new MFStruct();
-							mfStructTmp.initialization_3(custTmp,quantTmp);
-							lstMFStruct.add(mfStructTmp);
-							break;
+							if(lstMFStruct.get(i).equals(fromacTmp,fromtelTmp) == true)
+							{
+								lstMFStruct.get(i).set_count_2();
+								lstMFStruct.get(i).set_sum_length_2(lengthTmp);
+								lstMFStruct.get(i).set_avg_length_2(lengthTmp);
+								break;
+							}
+							if(i == lstMFStruct.size() - 1)
+							{
+								MFStruct mfStructTmp = new MFStruct();
+								mfStructTmp.initialization_2(fromacTmp,fromtelTmp,lengthTmp);
+								lstMFStruct.add(mfStructTmp);
+								break;
+							}
 						}
 					}
 				}
 			}
-			System.out.println("cust" + "\t" + "1_sum_quant" + "\t" + "2_count_quant" + "\t" + "2_max_quant" + "\t" + "2_avg_quant" + "\t" + "2_sum_quant" + "\t" + "3_count_quant");
+			//to print out the results.
+			System.out.printf("%-14s%-14s%14s%14s\n", "FROMAC" , "FROMTEL" , "1_SUM_LENGTH" , "2_AVG_LENGTH");
 			for(int i = 0; i != lstMFStruct.size(); i++)
 			{
-				System.out.println(lstMFStruct.get(i).cust + "\t" 
-					+ lstMFStruct.get(i).sum_quant_1 + "\t" 
-					+ lstMFStruct.get(i).count_2 + "\t" 
-					+ lstMFStruct.get(i).max_quant_2 + "\t" 
-					+ lstMFStruct.get(i).avg_quant_2 + "\t" 
-					+ lstMFStruct.get(i).sum_quant_2 + "\t" 
-					+ lstMFStruct.get(i).count_3);
+				System.out.printf("%-14s%-14s%14s%14s\n", 
+					 lstMFStruct.get(i).fromac , 
+					 lstMFStruct.get(i).fromtel , 
+					 lstMFStruct.get(i).sum_length_1 , 
+					 lstMFStruct.get(i).avg_length_2);
 			}
 		}
 		catch (SQLException e)

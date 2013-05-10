@@ -1,14 +1,16 @@
 //This class deal with Select Condition-Vect...
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class SelectConVectConverter
 {
 	MFStructOrig mfstruct;
 	ArrayList<String> lstConVects = new ArrayList<String>();
 	ArrayList<Pair<Integer, String>> lstJavaCodeConditions = new ArrayList<Pair<Integer, String>>();
-	//Constructor!
 	InfoSchema info;
+	
+	//Constructor!
 	public SelectConVectConverter(MFStructOrig orig, InfoSchema info_Orig)
 	{
 		mfstruct = orig;
@@ -17,6 +19,7 @@ public class SelectConVectConverter
 		this.setCodeList();
 	}
 	
+	//set code list
 	private void setCodeList()
 	{
 		for(int i = 0; i != this.lstConVects.size(); i++)
@@ -26,73 +29,91 @@ public class SelectConVectConverter
 		}
 	}
 	
+	//self-made tool set int-string pair
 	private void setPairIntString(String tmpStr)
-	{
+	{		
+		int target = -1;
+		String finish_parsedStr = new String();
+		
+		String parsedStr = tmpStr;
+		
+		parsedStr = parsedStr.replace('\'', '\"');
+
+		for(int i1 = 0; i1 != info.getList().size(); i1++)
+		{
+			String subName = info.getList().get(i1).getFirst();
+			parsedStr = parsedStr.replaceAll(subName, subName + "Tmp");
+		}
+		
+		
 		for(int i = 0; i != tmpStr.length(); i++)
 		{
-			if(tmpStr.charAt(i) == '.')
+			if (tmpStr.charAt(i) == '.')
 			{
-				String parsedStr = tmpStr.substring(i + 1, tmpStr.length());
-				String subName = null, type = null;
-				parsedStr = parsedStr.replaceAll("\\s", "");
-				parsedStr = parsedStr.replace('\'', '\"');
-				for(int i1 = 0; i1 != info.getList().size(); i1++)
+				String tmp = tmpStr.substring(0,i);
+				target = Integer.parseInt(tmp);
+				tmp = tmp+"\\.";
+				parsedStr = parsedStr.replaceAll(tmp,"");	
+				break;
+			}
+		}	
+		
+		String[] tempStrings = parsedStr.split(" "); 
+		ArrayList<String> strings = new ArrayList<String>(Arrays.asList(tempStrings));
+		
+		// Deal with and, or, '='...
+		for(int j = 0; j != strings.size(); j++)
+		{
+			String tempStr = strings.get(j);
+			if (tempStr.equals("and"))
+			{
+				finish_parsedStr += "&&";
+			}
+			else if (tempStr.equals("or"))
+			{
+				finish_parsedStr += "||";
+			}
+			else if (tempStr.contains("="))
+			{
+				String type = new String();
+				for(int i2 = 0; i2 != info.getList().size(); i2++)
 				{
-					subName = info.getList().get(i1).getFirst();
-					if(parsedStr.contains(subName))
+					String subName = info.getList().get(i2).getFirst();
+					if (tempStr.contains(subName))
 					{
 						type = info.getTypeFromColumn(subName);
-						parsedStr = parsedStr.replace(subName, subName + "Tmp");
 					}
 				}
-				int itmp = 0;
-				for(int j = 0; j != parsedStr.length(); j++)
+				if(!tempStr.contains(">") && 
+						!tempStr.contains("<") &&
+						!tempStr.contains("!"))
 				{
-					if(parsedStr.charAt(j) == '=')
+					if (type.equals("String"))
 					{
-						itmp++;
-					}
-					if(itmp > 2)
-					{
-						System.out.println("Input Error!");
-					}
-				}
-				if(parsedStr.contains("=="))
-				{
-					if(type.equals("String"))
-					{
-						parsedStr = parsedStr.replace("=", ".equalsIgnoreCase(");
-						parsedStr += ")";
+						tempStr = tempStr.replaceFirst("=", ".equalsIgnoreCase(");
+						tempStr += ")";
 					}
 					else
 					{
-						parsedStr = parsedStr.replace("==", ".equals(");
-						parsedStr += ")";
+						tempStr = tempStr.replaceFirst("=", "==");
 					}
 				}
-				if(parsedStr.contains("="))
+				else if (tempStr.contains("!"))
 				{
-					if(type == null)
+					if (type.equals("String"))
 					{
-						System.out.println("Type is NULL! SelectConVectConverter.java");
-						return;
-					}
-					if(type.equals("String"))
-					{
-						parsedStr = parsedStr.replace("=", ".equalsIgnoreCase(");
-						parsedStr += ")";
-					}
-					else
-					{
-						parsedStr = parsedStr.replace("=", ".equals(");
-						parsedStr += ")";
+						tempStr = tempStr.replaceFirst("!=", ".equalsIgnoreCase(");
+						tempStr += ")";
+						tempStr = "!" + tempStr;
 					}
 				}
-				String tmp = tmpStr.substring(0, i);
-				int j = Integer.parseInt(tmp);
-				this.lstJavaCodeConditions.add(new Pair<Integer, String>(j, parsedStr));
+				finish_parsedStr += tempStr;
+			}
+			else 
+			{		
+				finish_parsedStr += tempStr;
 			}
 		}
+		this.lstJavaCodeConditions.add(new Pair<Integer, String>(target, finish_parsedStr));
 	}
-	
 }

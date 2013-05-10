@@ -1,30 +1,38 @@
+//A pair Structure. A useful tool, to store all kinds of data.
 public class Pair<T, U>
-{         
+{
+	//override datatypes
 	public T t;
 	public U u;
 
+	//constructor
 	public Pair()
 	{
 		t = null;
 		u = null;
 	}
+	
+	//override constructor
 	public Pair(T t, U u)
 	{         
 		this.t= t;
 		this.u= u;
 	}
 
+	//set data
 	public void put(T t1, U u1)
 	{
 		this.t = t1;
 		this.u = u1;
 	}
 
+	//get first data
 	public T getFirst()
 	{
 		return t;
 	}
 
+	//get second data
 	public U getSecond()
 	{
 		return u;
@@ -35,6 +43,7 @@ public class Pair<T, U>
 		u = u1;
 	}
 	
+	//check equal
 	public boolean equals(Object obj)
 	{
 		if(!(obj instanceof Pair))

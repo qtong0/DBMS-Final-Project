@@ -1,7 +1,12 @@
+//This file is used to generate "MFStruct.java" file
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class GenerateMFStructCode
 {
+	//all arraylists to store everything
 	private ArrayList<Pair<String, String>> lstAllTypeName = null;
 	private ArrayList<Pair<String, String>> lstGroupingTypeName = null;
 	private ArrayList<Pair<String, String>> lstVFVar = null;
@@ -12,6 +17,7 @@ public class GenerateMFStructCode
 	private String classStr;
 	private String strInitFunction;
 
+	//Constructor.
 	public GenerateMFStructCode()
 	{
 		structStr = null;
@@ -19,6 +25,7 @@ public class GenerateMFStructCode
 		strInitFunction = null;
 	}
 
+	//override constructor.
 	public GenerateMFStructCode(GenerateMFStructCode orig)
 	{
 		this.lstAllTypeName = orig.lstAllTypeName;
@@ -31,26 +38,32 @@ public class GenerateMFStructCode
 		this.strInitFunction = orig.strInitFunction;
 	}
 	
+	//get lstFunctionNumberNames
 	public ArrayList<Pair<Integer, String>> getFuncitonList()
 	{
 		return this.lstFunctionNumberNames;
 	}
 	
+	//get lstGroupingTypeName Pair<String, String> type name.
 	public ArrayList<Pair<String, String>> getGroupingTypeNameList()
 	{
 		return this.lstGroupingTypeName;
 	}
 	
+	
+	//get strInitFunction;
 	public String getInitFunctionString()
 	{
 		return this.strInitFunction;
 	}
 	
+	//return lstAllTypeName, type name.
 	public ArrayList<Pair<String, String>> getAllTypeNameList()
 	{
 		return this.lstAllTypeName;
 	}
 	
+	//Struct String, not done yet.
 	public void setStructString(MFStructOrig mforig, InfoSchema info)
 	{
 		structStr = "struct mf_struct\n{\n";
@@ -73,6 +86,7 @@ public class GenerateMFStructCode
 		structStr += "};\n";
 	}
 
+	//set JAVA Class String...
 	public void setClassString(MFStructOrig mforig, InfoSchema info)
 	{
 		//get list of functions
@@ -101,8 +115,20 @@ public class GenerateMFStructCode
 		}
 
 		lstAllTypeName = new ArrayList<Pair<String, String>>();
-		classStr = "public class ";
+		//Add head comments.
+		
+		Date dNow = new Date();
+		SimpleDateFormat ft = new SimpleDateFormat ("E yyyy.MM.dd 'at' hh:mm:ss a zzz");
+
+		classStr = "//This code is automatically generated.\n";
+		classStr += "//Generated Time:" + ft.format(dNow) + ".\n";
+		classStr += "//\n";
+		classStr += "//This code is the Class help implement the methods like avg, sum, max...\n\n";
+		
+		//
+		classStr += "public class ";
 		classStr += "MFStruct\n{\n";
+		classStr += "\t//all variables...\n";
 		String columnOrig = null;
 
 		for(int i = 0; i != mforig.lst_Select_Attr.size(); i++)
@@ -270,8 +296,10 @@ public class GenerateMFStructCode
 		return sumColumnNameStr;
 	}
 
+	//Generate the initialization functions
 	private String addJavaInitFunction(MFStructOrig mforig, InfoSchema info, String classStr)
 	{
+		classStr += "\n\t//initialize the variables in each group.";
 		for(int j = 0; j != mforig.num_Grouping_Vari; j++)
 		{
 			classStr += "\n\tpublic void initialization_" + new Integer(j+1) + "(";
@@ -399,10 +427,12 @@ public class GenerateMFStructCode
 		return tmpName;
 	}
 
+	//Generate equals() function.
 	private String addJavaEqualsFuction(String classStr)
 	{
 		String tmpStr = classStr;
-		tmpStr += "\n\tpublic boolean equals(";
+		tmpStr += "\n\t//equals() fucntion.\n";
+		tmpStr += "\tpublic boolean equals(";
 		for(int i = 0; i != this.lstGroupingTypeName.size(); i++)
 		{
 			tmpStr += this.lstGroupingTypeName.get(i).getFirst();
@@ -461,16 +491,17 @@ public class GenerateMFStructCode
 		return ireturn;
 	}
 
-	//Add avgFunction
+	//Add avg Functions
 	private String addJavaAvgFunction(String classStr)
 	{
+		classStr += "\n\t//average functions.\n";
 		for(int i = 0; i != this.lstAllTypeName.size(); i++)
 		{
 			if(this.lstAllTypeName.get(i).getSecond().contains("avg"))
 			{
 				String name = this.lstAllTypeName.get(i).getSecond();
 				String type = this.lstAllTypeName.get(i).getFirst();
-				classStr += "\n\tpublic void ";
+				classStr += "\tpublic void ";
 				String functionName = "set_" + name;
 				classStr += functionName;
 				this.lstFunctionNumberNames.add(new Pair<Integer, String>(
@@ -494,15 +525,17 @@ public class GenerateMFStructCode
 		return classStr;
 	}
 
+	//Gnerate sum functions.
 	private String addJavaSumFunction(String classStr)
 	{
+		classStr += "\n\t//sum functions.\n";
 		for(int i = 0; i != this.lstAllTypeName.size(); i++)
 		{
 			if(this.lstAllTypeName.get(i).getSecond().contains("sum"))
 			{
 				String name = this.lstAllTypeName.get(i).getSecond();
 				String type = this.lstAllTypeName.get(i).getFirst();
-				classStr += "\n\tpublic void ";
+				classStr += "\tpublic void ";
 				String functionName = "set_" + name;
 				this.lstFunctionNumberNames.add(new Pair<Integer, String>(
 						new Integer(this.getVariableNumber(functionName)), functionName));
@@ -518,16 +551,18 @@ public class GenerateMFStructCode
 		}
 		return classStr;
 	}
-
+	
+	//Generate maxFunctions
 	private String addJavaMaxFunction(String classStr)
 	{
+		classStr += "\n\t//max functions\n";
 		for(int i = 0; i != this.lstAllTypeName.size(); i++)
 		{
 			if(this.lstAllTypeName.get(i).getSecond().contains("max"))
 			{
 				String name = this.lstAllTypeName.get(i).getSecond();
 				String type = this.lstAllTypeName.get(i).getFirst();
-				classStr += "\n\tpublic void ";
+				classStr += "\tpublic void ";
 				String functionName = "set_" + name;
 				this.lstFunctionNumberNames.add(new Pair<Integer, String>(
 						new Integer(this.getVariableNumber(functionName)), functionName));
@@ -545,15 +580,17 @@ public class GenerateMFStructCode
 		return classStr;
 	}
 
+	//Generate MinFunctions
 	private String addJavaMinFunction(String classStr)
 	{
+		classStr += "\n\t//min functions.\n";
 		for(int i = 0; i != this.lstAllTypeName.size(); i++)
 		{
 			if(this.lstAllTypeName.get(i).getSecond().contains("min"))
 			{
 				String name = this.lstAllTypeName.get(i).getSecond();
 				String type = this.lstAllTypeName.get(i).getFirst();
-				classStr += "\n\tpublic void ";
+				classStr += "\tpublic void ";
 				String functionName = "set_" + name;
 				this.lstFunctionNumberNames.add(new Pair<Integer, String>(
 						new Integer(this.getVariableNumber(functionName)), functionName));

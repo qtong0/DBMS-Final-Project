@@ -1,3 +1,6 @@
+//small class to store all DB data
+//includes username, password, DBURL, DBtablename
+
 public class UI_Information
 {
 	String strDBUserName = new String();

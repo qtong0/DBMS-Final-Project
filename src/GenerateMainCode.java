@@ -1,3 +1,5 @@
+//Generate main function code, especially generate while() loop.
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -5,10 +7,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+//To generate main file.
 public class GenerateMainCode
 {
 	UI_Information uiinfo;
+	String strSaveDir;
 	
+	//Generate head comments, time included.
 	GenerateMFStructCode genMFStructcode = null;
 	MFStructOrig mfstructOrig = null;
 	Date dNow = new Date();
@@ -38,7 +43,8 @@ public class GenerateMainCode
 	String strMain_2;
 	
 	//first scan, while loop
-	String strFirstScan_3 = "\t\t\twhile(rs.next())\n"
+	String strFirstScan_3 = "\t\t\t//Scan the whole database.\n"
+			+ "\t\t\twhile(rs.next())\n"
 			+ "\t\t\t{\n";
 	
 	String strSinpleScan = null;
@@ -56,9 +62,10 @@ public class GenerateMainCode
 			+ "\t\t}\n"
 			+ "\t}\n}\n";
 	
-	//Constructor...
-	public GenerateMainCode(UI_Information uiinfo_orig, MFStructOrig mfStructOrig, GenerateMFStructCode mfstruct, InfoSchema info)
+	//Constructor... Initialize data structures, classes and types
+	public GenerateMainCode(String saveDir,UI_Information uiinfo_orig, MFStructOrig mfStructOrig, GenerateMFStructCode mfstruct, InfoSchema info)
 	{
+		this.strSaveDir = saveDir;
 		this.uiinfo = new UI_Information(uiinfo_orig);
 		this.strMain_2 = generateUIInfo();
 		this.strClassDec_1 = generateDeclaration();
@@ -70,6 +77,7 @@ public class GenerateMainCode
 		strPrintResults = this.printResults();
 	}
 	
+	//output the generated files and save them in selected location.
 	public void printGCode()
 	{
 		if(strSinpleScan != null)
@@ -79,11 +87,11 @@ public class GenerateMainCode
 			//generate a java file
 			try
 			{
-				PrintWriter pwoutMain = new PrintWriter(new FileWriter("./GeneratedCode.java"));
+				PrintWriter pwoutMain = new PrintWriter(new FileWriter(this.strSaveDir + "/GeneratedCode.java"));
 				pwoutMain.print(strTotalCode);
 				System.out.println("File GeneratedCode.java successfully generated!");
 				pwoutMain.close();
-				PrintWriter pwoutMFstruct = new PrintWriter(new FileWriter("./MFStruct.java"));
+				PrintWriter pwoutMFstruct = new PrintWriter(new FileWriter(this.strSaveDir + "/MFStruct.java"));
 				pwoutMFstruct.print(this.genMFStructcode.getClassStr());
 				System.out.println("File MFStruct.java successfully generated!");
 				pwoutMFstruct.close();
@@ -95,20 +103,26 @@ public class GenerateMainCode
 		}
 	}
 	
+	//The First part of the main file, declaration of all DB needed data.
 	private String generateDeclaration()
 	{
 		return "public class " + strClassName + "\n" + "{\n"
+				+ "\t//Declare and initialize all types and data.\n"
 				+ "\t" + "static final String JDBC_DRIVER = \"org.postgresql.Driver\";\n"
 				+ "\t" + "static final String DB_URL = \"" + uiinfo.strDBURL +/*"jdbc:postgresql://localhost:5432/DBMS"*/"\";\n"
 				+ "\t" + "static final String user = \"" + uiinfo.strDBUserName +/*"postgres"*/"\";\n"
 				+ "\t" + "static final String password = \"" + uiinfo.strDBPSW + "\";\n"
 				+ "\t" + "static Connection conn;\n"
+				+ "\t//There might be some unused datatypes, eliminate warning.\n"
 				+ "\t" + "@SuppressWarnings(\"unused\")\n";
 	}
 	
+	//To generate first few lines of the main method.
 	private String generateUIInfo()
 	{
-		return "\t" + "static public void main(String arg[])\n" + "\t{\n"
+		return "\n\t//main method...\n" +
+				"\t" + "static public void main(String arg[])\n" + "\t{\n"
+				+ "\t\t//ArrayList stores all the MFStruct type of data.\n"
 				+ "\t\tArrayList<MFStruct> lstMFStruct = new ArrayList<MFStruct>();\n"
 				+ "\t\t" + "try\n" + "\t\t{\n"
 		+ "\t\t\tClass.forName(JDBC_DRIVER);\n"
@@ -136,6 +150,7 @@ public class GenerateMainCode
 		
 		for(int i = 0; i != this.mfstructOrig.num_Grouping_Vari; i++)
 		{
+			tmp += "\t\t\t\t//#" + new Integer(i+1) + " Selection Conditions.\n";
 			tmp += "\t\t\t\tif(" + this.mySCVConverter.lstJavaCodeConditions.get(i).getSecond() + ")\n";
 			tmp += "\t\t\t\t{\n";
 			tmp += "\t\t\t\t\tif(lstMFStruct.size() == 0)\n";
@@ -144,11 +159,15 @@ public class GenerateMainCode
 			tmp += "\t\t\t\t\t\tmfStructTmp.initialization_" + new Integer(i+1) + "(";
 			tmp += this.genMFStructcode.getInitFunctionString();
 			tmp += "\t\t\t\t\t\tlstMFStruct.add(mfStructTmp);\n";
-			tmp += "\t\t\t\t\t\tcontinue;\n";
+//			tmp += "//\t\t\t\t\t\tcontinue;\n";
 			tmp += "\t\t\t\t\t}\n";
-			tmp += "\t\t\t\t\tfor(int i = 0; i != lstMFStruct.size(); i++)\n";
+			
+			tmp += "\t\t\t\t\telse\n";
 			tmp += "\t\t\t\t\t{\n";
-			tmp += "\t\t\t\t\t\tif(lstMFStruct.get(i).equals(";
+			
+			tmp += "\t\t\t\t\t\tfor(int i = 0; i != lstMFStruct.size(); i++)\n";
+			tmp += "\t\t\t\t\t\t{\n";
+			tmp += "\t\t\t\t\t\t\tif(lstMFStruct.get(i).equals(";
 			for(int i0 = 0; i0 != this.genMFStructcode.getGroupingTypeNameList().size(); i0++)
 			{
 				tmp += this.genMFStructcode.getGroupingTypeNameList().get(i0).getSecond() + "Tmp";
@@ -158,9 +177,9 @@ public class GenerateMainCode
 				}
 			}
 			tmp += ") == true)\n";
-			tmp += "\t\t\t\t\t\t{\n";
+			tmp += "\t\t\t\t\t\t\t{\n";
 			//Add count_* functions
-			tmp += "\t\t\t\t\t\t\tlstMFStruct.get(i).set_count_" + new Integer(i+1)+ "();\n";
+			tmp += "\t\t\t\t\t\t\t\tlstMFStruct.get(i).set_count_" + new Integer(i+1)+ "();\n";
 			
 			ArrayList<Pair<Integer, String>> tmpList = new ArrayList<Pair<Integer, String>>(
 					this.genMFStructcode.getFuncitonList());
@@ -168,21 +187,22 @@ public class GenerateMainCode
 			{
 				if(tmpList.get(j).getFirst().equals(i+1))
 				{
-					tmp += "\t\t\t\t\t\t\tlstMFStruct.get(i).";
+					tmp += "\t\t\t\t\t\t\t\tlstMFStruct.get(i).";
 					tmp += tmpList.get(j).getSecond() + "(" + 
 					this.myInitSubString(tmpList.get(j).getSecond()) + "Tmp" + ");\n";
 				}
 			}
-			tmp += "\t\t\t\t\t\t\tbreak;\n";
-			tmp += "\t\t\t\t\t\t}\n";
+			tmp += "\t\t\t\t\t\t\t\tbreak;\n";
+			tmp += "\t\t\t\t\t\t\t}\n";
 			
-			tmp += "\t\t\t\t\t\tif(i == lstMFStruct.size() - 1)\n";
-			tmp += "\t\t\t\t\t\t{\n";
-			tmp += "\t\t\t\t\t\t\tMFStruct mfStructTmp = new MFStruct();\n";
-			tmp += "\t\t\t\t\t\t\tmfStructTmp.initialization_" + new Integer(i+1) + "("
+			tmp += "\t\t\t\t\t\t\tif(i == lstMFStruct.size() - 1)\n";
+			tmp += "\t\t\t\t\t\t\t{\n";
+			tmp += "\t\t\t\t\t\t\t\tMFStruct mfStructTmp = new MFStruct();\n";
+			tmp += "\t\t\t\t\t\t\t\tmfStructTmp.initialization_" + new Integer(i+1) + "("
 						+ this.genMFStructcode.getInitFunctionString();
-			tmp += "\t\t\t\t\t\t\tlstMFStruct.add(mfStructTmp);\n";
-			tmp += "\t\t\t\t\t\t\tbreak;\n";
+			tmp += "\t\t\t\t\t\t\t\tlstMFStruct.add(mfStructTmp);\n";
+			tmp += "\t\t\t\t\t\t\t\tbreak;\n";
+			tmp += "\t\t\t\t\t\t\t}\n";
 			tmp += "\t\t\t\t\t\t}\n";
 			tmp += "\t\t\t\t\t}\n";
 			tmp += "\t\t\t\t}\n";
@@ -191,22 +211,39 @@ public class GenerateMainCode
 		return tmp;
 	}
 	
+	//print results at the last part.
 	private String printResults()
 	{
 		String strReturn = "\t\t\t//to print out the results.\n";
-		strReturn = "\t\t\tSystem.out.println(";
+		strReturn += "\t\t\tSystem.out.printf(\"";
+
+		String tmpOutputFormat = new String();
+		for(int i = 0; i != this.mfstructOrig.lst_Grouping_Attr.size(); i++)
+		{
+			strReturn += "%-14s";
+			tmpOutputFormat += "%-14s";
+		}
+		for(int i = 0; i != this.mfstructOrig.lst_FV.size(); i++)
+		{
+			strReturn += "%14s";
+			tmpOutputFormat += "%14s";
+		}
+		strReturn += "\\n\", ";
 		for(int i = 0; i != this.mfstructOrig.lst_Select_Attr.size(); i++)
 		{
-			strReturn += "\"" + this.mfstructOrig.lst_Select_Attr.get(i) + "\"";
+			strReturn += "\"" + this.mfstructOrig.lst_Select_Attr.get(i).toUpperCase() + "\"";
 			if(i != this.mfstructOrig.lst_Select_Attr.size() - 1)
 			{
-				strReturn += " + \"\\t\" + ";
+				strReturn += " , ";
 			}
 		}
 		strReturn += ");\n";
 		strReturn += "\t\t\tfor(int i = 0; i != lstMFStruct.size(); i++)\n";
 		strReturn += "\t\t\t{\n";
-		strReturn += "\t\t\t\tSystem.out.println(";
+		strReturn += "\t\t\t\tSystem.out.printf(\"" + tmpOutputFormat + "\\n\", \n\t\t\t\t\t ";
+		
+		
+		
 		ArrayList<String> tmpList = this.mfstructOrig.lst_Select_Attr;
 		for(int i = 0; i != tmpList.size(); i++)
 		{
@@ -224,7 +261,7 @@ public class GenerateMainCode
 			}
 			if(i != tmpList.size() - 1)
 			{
-				strReturn += " + \"\\t\" \n\t\t\t\t\t+ ";
+				strReturn += " , \n\t\t\t\t\t ";
 			}
 		}
 		strReturn += ");\n";

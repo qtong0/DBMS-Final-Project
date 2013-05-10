@@ -1,39 +1,41 @@
+//This code is automatically generated.
+//Generated Time:Fri 2013.05.10 at 01:20:17 AM EDT.
+//
+//This code is the Class help implement the methods like avg, sum, max...
+
 public class MFStruct
 {
-	String cust;
-	int sum_quant_1;
-	int max_quant_2;
-	int sum_quant_2;
-	int avg_quant_2;
+	//all variables...
+	String fromac;
+	String fromtel;
+	int sum_length_1;
+	int avg_length_2;
+	int sum_length_2;
 	int count_1;
 	int count_2;
-	int count_3;
 
-	public void initialization_1(String custTmp,int quant)
+	//initialize the variables in each group.
+	public void initialization_1(String fromacTmp,String fromtelTmp,int length)
 	{
-		cust = custTmp;
-		sum_quant_1 = quant;
+		fromac = fromacTmp;
+		fromtel = fromtelTmp;
+		sum_length_1 = length;
 		count_1 = 1;
 	}
 
-	public void initialization_2(String custTmp,int quant)
+	public void initialization_2(String fromacTmp,String fromtelTmp,int length)
 	{
-		cust = custTmp;
-		max_quant_2 = quant;
-		sum_quant_2 = quant;
-		avg_quant_2 = quant;
+		fromac = fromacTmp;
+		fromtel = fromtelTmp;
+		avg_length_2 = length;
+		sum_length_2 = length;
 		count_2 = 1;
 	}
 
-	public void initialization_3(String custTmp,int quant)
+	//equals() fucntion.
+	public boolean equals(String fromacTmp,String fromtelTmp)
 	{
-		cust = custTmp;
-		count_3 = 1;
-	}
-
-	public boolean equals(String custTmp)
-	{
-		if(cust.equals(custTmp))
+		if(fromac.equals(fromacTmp) && fromtel.equals(fromtelTmp))
 		{
 			return true;
 		}
@@ -43,27 +45,20 @@ public class MFStruct
 		}
 	}
 
-	public void set_sum_quant_1(int quantTmp)
+	//sum functions.
+	public void set_sum_length_1(int lengthTmp)
 	{
-		sum_quant_1+=quantTmp;
+		sum_length_1+=lengthTmp;
+	}
+	public void set_sum_length_2(int lengthTmp)
+	{
+		sum_length_2+=lengthTmp;
 	}
 
-	public void set_sum_quant_2(int quantTmp)
+	//average functions.
+	public void set_avg_length_2(int lengthTmp)
 	{
-		sum_quant_2+=quantTmp;
-	}
-
-	public void set_avg_quant_2(int quantTmp)
-	{
-		avg_quant_2 = sum_quant_2 / count_2;
-	}
-
-	public void set_max_quant_2(int quantTmp)
-	{
-		if(quantTmp > max_quant_2)
-		{
-			max_quant_2 = quantTmp;
-		}
+		avg_length_2 = sum_length_2 / count_2;
 	}
 
 	public void set_count_1()
@@ -74,11 +69,6 @@ public class MFStruct
 	public void set_count_2()
 	{
 		count_2++;
-	}
-
-	public void set_count_3()
-	{
-		count_3++;
 	}
 
 }

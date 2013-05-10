@@ -1,15 +1,19 @@
+//Deal with original file input, save them into ArrayLists.
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class MFStructOrig
 {
+	//To store all the data from the file.
 	public ArrayList<String> lst_Select_Attr = new ArrayList<String>();
 	public int num_Grouping_Vari = 0;
 	public ArrayList<String> lst_Grouping_Attr = new ArrayList<String>();
 	public ArrayList<String> lst_FV = new ArrayList<String>();
 	public ArrayList<String> lst_Conditions = new ArrayList<String>();
 	
+	//Constructor...
 	public MFStructOrig(MFStructOrig orig)
 	{
 		this.lst_Select_Attr = orig.lst_Select_Attr;
@@ -18,6 +22,8 @@ public class MFStructOrig
 		this.lst_FV = orig.lst_FV;
 		this.lst_Conditions = orig.lst_Conditions;
 	}
+	
+	//Override constructor...
 	public MFStructOrig()
 	{
 		this.lst_Select_Attr = new ArrayList<String>();
@@ -27,6 +33,7 @@ public class MFStructOrig
 		this.lst_Conditions = new ArrayList<String>();
 	}
 
+	//Select Attributes set into list
 	public void setSelectAttributes(String curLine)
 	{
 //		System.out.println("Select attribute(s):");
@@ -71,6 +78,7 @@ public class MFStructOrig
 		lst_Select_Attr = this.toLowerCase(lst_Select_Attr);
 	}
 	
+	//same from file
 	public void setSelectAttributes(BufferedReader br, String curLine)
 	{
 //		System.out.println("Select attribute(s):");
@@ -124,6 +132,7 @@ public class MFStructOrig
 		lst_Select_Attr = this.toLowerCase(lst_Select_Attr);
 	}
 	
+	//set grouping attributes number
 	public void setGroupingAttrNumber(String curLine)
 	{
 //		System.out.println("Grouping variable number:");
@@ -134,6 +143,7 @@ public class MFStructOrig
 		//Check output
 	}
 	
+	//set grouping attributes into list
 	public void setGroupingAttrs(String curLine)
 	{
 //		System.out.println("Grouping attribute(s):");
@@ -178,6 +188,7 @@ public class MFStructOrig
 		lst_Grouping_Attr = this.toLowerCase(lst_Grouping_Attr);
 	}
 	
+	//file version.
 	public void setGroupingAttrs(BufferedReader br, String curLine)
 	{
 //		System.out.println("Grouping attribute(s):");
@@ -230,6 +241,7 @@ public class MFStructOrig
 		lst_Grouping_Attr = this.toLowerCase(lst_Grouping_Attr);
 	}
 	
+	//set FV into list.
 	public void setFV(String curLine)
 	{
 //		System.out.println("F-VECT:");
@@ -274,6 +286,7 @@ public class MFStructOrig
 		lst_FV = this.toLowerCase(lst_FV);
 	}
 	
+	//file version.
 	public void setFV(BufferedReader br, String curLine)
 	{
 //		System.out.println("F-VECT:");
@@ -327,6 +340,7 @@ public class MFStructOrig
 		lst_FV = this.toLowerCase(lst_FV);
 	}
 	
+	//conditions
 	public void setConditions(String curLine)
 	{
 //		System.out.println("Conditions:");
@@ -371,6 +385,7 @@ public class MFStructOrig
 		lst_Conditions = this.toLowerCase(lst_Conditions);
 	}
 	
+	//conditions file version
 	public void setConditions(BufferedReader br, String curLine)
 	{
 //		System.out.println("Conditions:");
@@ -431,6 +446,7 @@ public class MFStructOrig
 		lst_Conditions = this.toLowerCase(lst_Conditions);
 	}
 	
+	//to lowercase because sql case insensitive.
 	private ArrayList<String> toLowerCase(ArrayList<String> lst)
 	{
 		for (int i = 0; i != lst.size(); i++)

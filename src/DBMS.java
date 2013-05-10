@@ -1,3 +1,6 @@
+//this is the original main file before new UI is built.
+//it can generate codes of a fixed database.
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -6,10 +9,12 @@ import java.sql.*;
 
 public class DBMS
 {
+	//DB data
 	static final String JDBC_DRIVER = "org.postgresql.Driver";
 	static final String DB_URL = "jdbc:postgresql://localhost:5432/DBMS";
 	static final String user = "postgres";
 	static final String password = "tongqiang";
+	//Other class
 	static final MFStructOrig mfStructOrig = new MFStructOrig();
 	static InfoSchema infoSchema = new InfoSchema();
 	static final GenerateMFStructCode genMFStructCode = new GenerateMFStructCode();
@@ -18,12 +23,14 @@ public class DBMS
 	
 	public static void main(String arg[])
 	{
-		String filePath = "./example.txt";
+		//Fixed file_path
+		String filePath = "./test_examples/example.txt";
 		BufferedReader br = null;
 		String curLine;
 		try
 		{
 			br = new BufferedReader(new FileReader(filePath));
+			//read file into MFStructOrig()
 			while((curLine = br.readLine()) != null)
 			{
 				if(curLine.equals("SELECT ATTRIBUTE(S):"))
@@ -64,7 +71,7 @@ public class DBMS
 			
 			genMFStructCode.setClassString(mfStructOrig, infoSchema);
 			
-			GenerateMainCode gCode = new GenerateMainCode(new UI_Information(), mfStructOrig, genMFStructCode, infoSchema);
+			GenerateMainCode gCode = new GenerateMainCode("./",new UI_Information(), mfStructOrig, genMFStructCode, infoSchema);
 //			gCode.setInfoSchemaList(infoSchema.getList());
 			gCode.printGCode();
 			conn.close();
@@ -101,6 +108,7 @@ public class DBMS
 		}
 	}
 	
+	//TO check information schema from the database
 	private static void checkInfoSchema()
 	{
 		String SQLQuery = "select column_name, data_type from information_schema.columns\n"

@@ -7,5 +7,5 @@ FromAC, FromTel
 F-VECT([F]):
 1_sum_Length, 2_avg_Length
 SELECT CONDITION-VECT([]):
-1.toAC = '201'
-2.toAC = '301'
+1.toAC='201'
+2.toAC='301'
